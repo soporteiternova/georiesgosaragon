@@ -1,0 +1,4 @@
+<FilesMatch "\.(htaccess|key)$">
+	Order Allow,Deny
+	Deny from all
+</FilesMatch>

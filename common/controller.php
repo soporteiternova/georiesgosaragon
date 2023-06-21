@@ -141,6 +141,7 @@ class controller {
                     <header class="special container">
                         <span class="icon solid fa-car-crash"></span>
                         <h2>GeoRiesgos <b>Arag&oacute;n </b ></h2 >
+                        <h2>ATENCI&Oacute;N: APLICACI&Oacute;N EN DESARROLLO</h2>
                         <p>Toda la informaci&oacute;n en tiempo real sobre riesgos geogr&aacute;ficos en Arag&oacute;n, que puedan afectar a las infrastructuras principales de carreteras y ferrocarriles.</p>
                     </header >
 
@@ -233,7 +234,6 @@ class controller {
 
     public function about(){
         $str = '<h2>Sobre GeoRiesgos Arag&oacute;n</h2>';
-        $str.= '<h2>ATENCI&Oacute;N: APLICACI&Oacute;N EN DESARROLLO</h2>';
         $str.= '<b>GeoRiesgos</b> Arag&oacute;n es una aplicaci&oacute;n multiplataforma, que mediante el uso de datos abiertos, procedentes de los repositorios OpenData del Gobierno de Arag&oacute;n y del Instituo Geogr&aacute;fico Nacional, muestra al ciudadano riesgos geogr&aacute;ficos en tiempo real, que puedan tener especial incidencia en carreteras y ferrocarriles.';
 
         $str .= '<br/><br/><p>Este es un programa inform&aacute;tico de software libre denominado "GeoRiesgos Arag&oacute;n" que forma parte de la subvenci&oacute;n de software libre, seg&uacute;n ORDEN CUS/166/2023, de 15 de febrero, por la que se convocan subvenciones de apoyo al software libre dirigidas a microempresas y a trabajadores aut&oacute;nomos.</p>';
