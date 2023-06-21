@@ -2,3 +2,4 @@
 /config/mongodb.key
 /libs/composer/vendor/
 /libs/composer/composer.lock
+.idea
