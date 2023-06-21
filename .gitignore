@@ -1,3 +1,4 @@
-/config/
+/config/googlemaps.key
+/config/mongodb.key
 /libs/composer/vendor/
 /libs/composer/composer.lock
