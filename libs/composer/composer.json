@@ -1,0 +1,11 @@
+{
+  "require": {
+    "mongodb/mongodb": "^1.8.0",
+    "jupitern/table": "2.0.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "georiesgosaragon\\": "../../"
+    }
+  }
+}
