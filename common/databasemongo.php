@@ -297,11 +297,23 @@ class databasemongo {
                             }
                             break;
                         case 'geoIntersects': // geospatial - $value es un array compuesto, tal que: array( lat, lng, type ).
+                            // @note Con geoIntersects, los datos tienen que estar en GeoJSON, del estilo [ 'type' => 'Polygon', 'coordinates' => [ [lng,lat], [lng,lat], [lng,lat]...]
                             if ( isset( $value[ 0 ], $value[ 1 ] ) ) {
                                 if ( !isset( $value[ 2 ] ) || !\in_array( $value[ 2 ], [ 'Point', 'Polygon' ] ) ) {
                                     $value[ 2 ] = 'Point';
                                 }
-                                $array_return[ $key ][ '$' . $modifier ] = [ '$geometry' => [ 'type' => $value[ 2 ], 'coordinates' => [ (float) $value[ 1 ], (float) $value[ 0 ] ] ] ];
+                                if ( $value[ 2 ] === 'Polygon' ) {
+                                    [ $latlng_1, $latlng_2 ] = $value;
+                                    $array_return[ $key ][ '$' . $modifier ] = [ '$geometry' => [ 'type' => 'Polygon', 'coordinates' => [ [
+                                        [ (float) $latlng_1[ 0 ], (float) $latlng_1[ 1 ] ],
+                                        [ (float) $latlng_2[ 0 ], (float) $latlng_1[ 1 ] ],
+                                        [ (float) $latlng_2[ 0 ], (float) $latlng_2[ 1 ] ],
+                                        [ (float) $latlng_1[ 0 ], (float) $latlng_2[ 1 ] ],
+                                        [ (float) $latlng_1[ 0 ], (float) $latlng_1[ 1 ] ],
+                                    ] ] ] ];
+                                } else {
+                                    $array_return[ $key ][ '$' . $modifier ] = [ '$geometry' => [ 'type' => $value[ 2 ], 'coordinates' => [ (float) $value[ 1 ], (float) $value[ 0 ] ] ] ];
+                                }
                             }
                             break;
                         case 'maxDistance': // geospatial - Distancia maxima...

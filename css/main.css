@@ -3322,3 +3322,11 @@ body.index #main {
     width: 100% !important;
     height: 100% !important;
 }
+
+.ui-datepicker {
+    background-color: #eeddb8;
+    border: 1px #000 solid;
+}
+.ui-state-default{
+    color: #777620;
+}

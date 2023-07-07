@@ -40,6 +40,9 @@ class controller {
             case 'get_historic':
                 return $this->get_historic();
                 break;
+            case 'show_in_map':
+                return $this->get_map_json();
+                break;
             case 'listing':
             default:
                 return $this->listing();
@@ -56,11 +59,8 @@ class controller {
     protected function crondaemon($debug = false) {
         // Loading of vehicles listing
         $datetime = date( 'Hi' );
-        var_dump( '1' );
-        var_dump( '1' );
-        var_dump( '1' );
-        var_dump( '1' );
         if ( $debug || $datetime === '0005' ) {
+            $count = 0;
             $api_url = \georiesgosaragon\common\controller::get_endpoint_url( \georiesgosaragon\common\controller::ENDPOINT_DESLIZAMIENTOS );
             $array_objs = json_decode( file_get_contents( $api_url ) );
 
@@ -68,13 +68,39 @@ class controller {
                 foreach ( $array_objs->features as $obj ) {
                     $obj_deslizamiento = new model();
                     $obj_deslizamiento->update_from_api( $obj );
-                    var_dump('test 2');
-                    die;
+                    $count++;
                 }
             }
+            echo '<br/><br/><br/><br/><br/>Updated ' . $count . ' glides';
         }
 
         return true;
+    }
+
+    /**
+     * Returns geojson data to load map layer
+     * @return void
+     */
+    private function get_map_json() {
+        $sw_lat = \georiesgosaragon\common\controller::get( 'sw_lat' );
+        $sw_lng = \georiesgosaragon\common\controller::get( 'sw_lng' );
+        $ne_lat = \georiesgosaragon\common\controller::get( 'ne_lat' );
+        $ne_lng = \georiesgosaragon\common\controller::get( 'ne_lng' );
+        $zoom = (int)\georiesgosaragon\common\controller::get( 'zoom' );
+
+        $return = [];
+
+        if( $zoom > 11 ) {
+            $obj_model = new model();
+
+            $array_opts[] = [ 'vertex', 'geoIntersects', [ [ $sw_lng, $sw_lat ], [ $ne_lng, $ne_lat ], 'Polygon' ], 'string' ];
+
+            $array_obj = $obj_model->get_all( $array_opts, [], 0, 0, '_id', [ 'debug' => false ] );
+
+            $return = \georiesgosaragon\common\utils::array_obj_to_geojson($array_obj);
+        }
+
+        echo json_encode( $return );
     }
 
 }

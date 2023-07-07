@@ -29,7 +29,6 @@ class model extends \georiesgosaragon\common\model {
     public $objectid = -1;
     public $descripcion = '';
     public $peligrosidad = '';
-    public $geometry = [];
     public $recordtime = '';
 
     /**
@@ -64,14 +63,51 @@ class model extends \georiesgosaragon\common\model {
                 $this->{$attr} = $api_object->properties->$tag;
             }
 
-            $this->geometry = json_encode($api_object->geometry);
+            $api_geometry = $api_object->geometry->coordinates;
+            $count_array = 0;
+            while( is_array( $api_geometry ) ){
+                $api_geometry = reset( $api_geometry);
+                $count_array++;
+            }
+
+            $api_geometry = $api_object->geometry->coordinates;
+            $count_array-=2;
+            for( $x = 0; $x<$count_array; $x++){
+                $api_geometry = reset( $api_geometry );
+            }
+            foreach( $api_geometry as $key => $coords ){
+                $coords = \georiesgosaragon\common\utils::OSGB36ToWGS84( $coords[ 1 ], $coords[ 0 ], 30 );
+                $api_geometry[$key] = [$coords[1], $coords[0]];
+            }
+
+            for ( $x = 0; $x < $count_array; $x++ ) {
+                $api_geometry = [$api_geometry];
+            }
+
+            $api_object->geometry->coordinates = $api_geometry;
+            $this->geometry = json_encode([$api_object->geometry]);
 
             $ret = $this->store();
-            var_dump($ret);
-            die;
         }
 
         return $ret;
+    }
+
+    public function get_json( $date_min, $date_max ) {
+        ini_set('memory_limit', '2G');
+        $ret = [ 'type' => 'FeatureCollection', 'features' => [] ];
+        $array_opts[] = [ 'recordtime', 'gte', $date_min, 'MongoDate' ];
+        $array_opts[] = [ 'recordtime', 'lte', $date_max, 'MongoDate' ];
+
+        $array_glides = $this->get_all( $array_opts, [], 0, 2000 );
+
+        if( !empty( $array_glides ) ) {
+            foreach( $array_glides as $glide ) {
+                $ret['features'][] = ['type' => 'Feature', 'properties' => [ 'description' => $glide->descripcion ], 'geometry' => json_decode($glide->geometry) ];
+                //echo( $glide->geometry);
+            }
+        }
+        return json_encode( $ret );
     }
 
     /**
@@ -82,7 +118,8 @@ class model extends \georiesgosaragon\common\model {
     protected function ensureIndex() {
         $array_indexes = [
             [ 'objectid' => 1 ],
-            [ 'recortdime' => 1 ]
+            [ 'recortdime' => 1 ],
+            [ 'vertex' => '2dsphere' ],
         ];
         foreach ( $array_indexes as $index ) {
             $this->_database_controller->ensureIndex( $this->_database_collection, $index );
@@ -128,50 +165,8 @@ class model extends \georiesgosaragon\common\model {
         }
     }
 
-    /**
-     * Gets array of data to be showed as markers in maps
-     *
-     * @param array $array_criteria search criteria
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function get_array_markers( $array_criteria = [] ) {
-        $array_objs = $this->get_all( $array_criteria );
-        $array_return = [];
-        $server_url = \georiesgosaragon\common\utils::get_server_url();
-
-        foreach ( $array_objs as $obj ) {
-            $str_address = htmlspecialchars( $obj->address );
-            $array_return[] = [
-                'id' => $obj->_id,
-                'lat' => $obj->lat_lng[ 0 ],
-                'lng' => $obj->lat_lng[ 1 ],
-                'title' => $str_address,
-                'marker_color' => $obj->network === \georiesgosaragon\common\controller::ENDPOINT_BUS_STOP_ARAGON ? 'red' : 'green',
-                'url' => $obj->network === \georiesgosaragon\common\controller::ENDPOINT_BUS_STOP_CTAZ ? $server_url . '/?&zone=bus_stop&action=get_remaining_time&bus_stop_id=' . $obj->code : '',
-            ];
-        }
-
-        return $array_return;
-    }
-
-    /**
-     * Gets vehicle object by code
-     *
-     * @param $bus_id
-     *
-     * @return void
-     */
-    public function select_by_code( $bus_id ) {
-        $obj = $this;
-        $array_criteria[] = [ 'code', 'eq', $bus_id, 'string' ];
-        $array_obj = $this->get_all( $array_criteria, [], 0, 1 );
-
-        if ( !empty( $array_obj ) ) {
-            $obj = reset( $array_obj );
-        }
-
-        return $obj;
+    public function get_feature_array(){
+        $coordinates = json_decode( $this->geometry );
+        return ['type' => 'Feature', 'properties' => [ 'description' => $this->descripcion, 'color' => 'red' ], 'geometry' => reset( $coordinates )];
     }
 }

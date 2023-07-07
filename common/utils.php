@@ -206,6 +206,13 @@ class utils {
         $str_return .= $_SERVER[ 'HTTP_HOST' ];
         return $str_return;
     }
+    /**
+     * Returns the server path to the app
+     * @return string
+     */
+    public static function get_path() {
+        return $_SERVER[ 'DOCUMENT_ROOT' ] . '/';
+    }
 
     /**
      * Initializa array opts from default opts
@@ -228,5 +235,20 @@ class utils {
         }
 
         return $array_config;
+    }
+
+    /**
+     * Returns geojson from array object
+     * @param array $array_obj
+     *
+     * @return array
+     */
+    public static function array_obj_to_geojson( $array_obj ) {
+        $return = [ 'type' => 'FeatureCollection', 'features' => [] ];
+        foreach( $array_obj as $obj ){
+            $return['features'][] = $obj->get_feature_array();
+        }
+
+        return $return;
     }
 }

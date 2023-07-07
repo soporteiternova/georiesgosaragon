@@ -31,7 +31,8 @@ class map {
      * @return string
      */
     private static function google_key() {
-        return trim( file_get_contents( __DIR__ . '/../config/googlemaps.key' ) );
+        $file = __DIR__ . '/../config/googlemaps.key';
+        return file_exists( __DIR__ . '/../config/googlemaps.key') ? trim( file_get_contents( $file ) ) : '';
     }
 
     /**
@@ -55,14 +56,16 @@ class map {
             'id' => 'roadslayer',
             'src' => 'https://servicios.idee.es/wms-inspire/transportes',
             'layers' => 'TN.RoadTransportNetwork.RoadLink',
-            'index' => 1
+            'index' => 1,
+            'active' => false
         ];
         $arrayopts[ 'wms_layers' ][] = [
             'title' => 'Ferrocarril',
             'id' => 'railwayslayer',
             'src' => 'https://servicios.idee.es/wms-inspire/transportes',
             'layers' => 'TN.RailTransportNetwork.RailwayLink',
-            'index' => 2
+            'index' => 2,
+            'active' => false
         ];
         [ $str_layers, $map_layers ] = self::get_layers_config_wms( $rand, $arrayopts );
 
@@ -78,7 +81,7 @@ class map {
                           east: 0.77,
                     };
                     
-                   const styledMapType = new google.maps.StyledMapType([
+                   const styledMap = new google.maps.StyledMapType([
                           {
                                 'featureType': 'poi',
                                 'stylers': [
@@ -111,15 +114,22 @@ class map {
                                                         restriction: {
                                                             latLngBounds: ARAGON_BOUNDS,
                                                             strictBounds: false
-                                                        },
-                                                        mapTypeControlOptions: {
-                                                            mapTypeIds: ['styled_map', 'satellite'],
-                                                        },                                              
+                                                        },                                           
                                                     });
                                                     
-                    window['map{$rand}'].mapTypes.set('styled_map', styledMapType);
-                    window['map{$rand}'].setMapTypeId('styled_map');
+                    //window['map{$rand}'].mapTypes.set('NSW', 'styled_map');
+                    
+                    //var mapTypeControlOptions = {
+                    //    mapTypeControlOptions: {
+                    //        mapTypeIds: [google.maps.MapTypeId.TERRAIN, 'NSW']
+                    //    }
+                    //};
+                    
+                    //window['map{$rand}'].setOptions(mapTypeControlOptions);
+                    
+                    //window['map{$rand}'].setMapTypeId('styled_map');
                     window['map_id'] = 'map{$rand}';
+                    window['layer_glides'] = new google.maps.Data();
                     window['map{$rand}'].setZoom({$zoom});
                     ";
         if ( $set_center_user ) {
@@ -134,7 +144,8 @@ class map {
 
         $str .= $str_layers;
 
-        $str .= 'load_comunidad_' . $rand . '();}';
+        $str .= 'load_comunidad_' . $rand . '();';
+        $str .= '}';
 
         $str .= 'function load_comunidad_' . $rand .'(){map' . $rand . '.data.loadGeoJson(
                     "' . utils::get_server_url() . '/common/files/comunidades.geojson"
@@ -252,4 +263,56 @@ class map {
               tileSize: new google.maps.Size(256, 256)
               }';
     }
+
+    /**
+     * Controlador de acciones
+     * @return void
+     */
+    public function actions() {
+        $action = controller::get( 'action' );
+        $ret = '';
+        switch ($action){
+            case 'deslizamientos_json':
+                $ret = $this->deslizamientos_json();
+                break;
+            default:
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Devuelve json para deslizamientos
+     * @return string
+     */
+    private function deslizamientos_json() {
+        $date_min = controller::get('dateMIN');
+        $date_max = controller::get('dateMAX');
+
+        if( empty( $date_min ) ) {
+            $date_min = date('Y-m-d 00:00:00', strtotime( '-1 year') );
+        } else {
+            $date_min = date('Y-m-d 00:00:00', strtotime( $date_min ) );
+        }
+
+        if( empty( $date_max) ) {
+            $date_max = date( 'Y-m-d 23:59:59' );
+        } else {
+            $date_max = date( 'Y-m-d 00:00:00', strtotime( $date_max ) );
+        }
+
+        $hash = sha1( 'glides_' . $date_min . '_' . $date_max );
+        $file_path = utils::get_path() . '/cache/' . $hash;
+
+        if( file_exists( $file_path ) ) {
+            return file_get_contents( $file_path );
+        }
+
+        $obj_glide = new \georiesgosaragon\deslizamientos\model();
+
+        $geojson = $obj_glide->get_json( $date_min, $date_max );
+        return $geojson;
+
+    }
+
 }

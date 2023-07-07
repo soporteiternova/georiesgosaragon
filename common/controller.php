@@ -37,6 +37,19 @@ class controller {
      * @param boolean $script Incluye scripts
      */
     public static function show_html_header( $echo = true, $script = true ) {
+        /*
+         *
+            <script language="javascript" type="text/javascript">
+
+                window.onload = function() {
+                    var s1 = document.createElement("script");
+                    s1.type = "text/javascript";
+                    s1.src = "libs/js/georiesgos.js";
+                    document.getElementByTagName("head")[0].appendChild(s1);
+                }
+
+            </script>
+         */
         $str = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 		<!--
 			Twenty by HTML5 UP
@@ -59,7 +72,7 @@ class controller {
             <!-- DATATABLES -->
             <link href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
             <script src="libs/js/jquery.dataTables.min.js"></script>
-            <script src="libs/js/georiesgos.js"></script>
+            <script src="/libs/js/georiesgos.js"></script>
 		</head>';
 
         if ( $echo ) {
@@ -157,7 +170,6 @@ class controller {
                 $str .= $controller->about();
                 break;
             case 'crondaemon':
-                var_dump( 'test' );
                 $controller->crondaemon(true);
                 break;
             default:
@@ -206,7 +218,7 @@ class controller {
         $url = '';
         switch ( $endpoint ) {
             case self::ENDPOINT_DESLIZAMIENTOS:
-                $url = 'https://opendata.aragon.es/GA_OD_Core/download?view_id=208&formato=json&_pageSize=1000&_page=1';
+                $url = 'https://opendata.aragon.es/GA_OD_Core/download?view_id=208&formato=json&_pageSize=10000&_page=1';
                 break;
             case self::ENDPOINT_INUNDACIONES:
                 $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json';
@@ -241,15 +253,22 @@ class controller {
     }
 
     private function main() {
-        $str = '<div class="row">
+        $url_glides = utils::get_server_url() . '?zone=deslizamientos&action=show_in_map&js=true';
+        $str = '<script src="/libs/js/georiesgos.js"></script><div class="row">
                     <div class="col-5" style="border:1px solid #000000;padding:4px;margin:1.75em;"><b>Selecci&oacute;n de infraestructuras:</b><br/>
                         <label><input type="checkbox" id="roads_checkbox" name="roads" checked="checked"/>Carreteras</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <label><input type="checkbox" id="railways_checkbox" name="railways" checked="checked"/>Ferrocarril</label>
                     </div>
                     <div class="col-5" style="border:1px solid #000000;padding:4px;margin:1.75em;"><b>Selecci&oacute;n de riesgos a visualizar:</b><br/>
-                        <label><input type="checkbox" id="deslizamientos" name="deslizamientos" checked="checked"/>Deslizamientos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label><input type="checkbox" id="inundaciones" name="inundaciones" checked="checked"/>Inundaciones</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label><input type="checkbox" id="colapsos" name="colapsos" checked="checked"/>Colapsos</label>
+                        <div class="row"><div class="col-5">
+                            <label><button onclick="show_json_layer(\'' . $url_glides . '\',\'glides\');">Ver deslizamientos</button></label><br/>
+                            <label><button>Ver inundaciones</button></label><br/>
+                            <label><button>Ver colapsos</button></label><br/>
+                            <label><button>Limpiar</button></label><br/>
+                            </div><div class="col-5">
+                            <label>Fecha inicial<input class="col-5" type="text" id="dateMIN" name="dateMIN" value="' . date('d/m/Y') . '"/></label>
+                            <label>Fecha final<input type="text" id="dateMAX" name="dateMAX" value="' . date('d/m/Y') . '"/></label>
+                        </div></div>
                     </div>
                 </div>';
         $str.= map::create_map([], 600, 400, false);

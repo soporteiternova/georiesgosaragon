@@ -29,6 +29,18 @@ require __DIR__ . '/libs/composer/vendor/autoload.php';
 session_start();
 
 // Index
-\georiesgosaragon\common\controller::show_html_header();
-\georiesgosaragon\common\controller::show_html_body();
-\georiesgosaragon\common\controller::show_html_footer();
+$zone = \georiesgosaragon\common\controller::get('zone');
+$js = \georiesgosaragon\common\controller::get('js');
+if( $zone === 'map' ) {
+    $controller = new \georiesgosaragon\common\map();
+    echo $controller->actions();
+} elseif( $js === 'true' ){
+    if( $zone === 'deslizamientos' ){
+        $controller = new \georiesgosaragon\deslizamientos\controller();
+        echo $controller->actions();
+    }
+} else {
+    \georiesgosaragon\common\controller::show_html_header();
+    \georiesgosaragon\common\controller::show_html_body();
+    \georiesgosaragon\common\controller::show_html_footer();
+}

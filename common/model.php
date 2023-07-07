@@ -41,6 +41,12 @@ abstract class model {
     /** @var bool $active indicates if item is active or has been deleted */
     public $active = true;
 
+    public $vertex = [
+        'type' => 'Polygon',
+        'coordinates' => [],
+        ];
+    public $geometry = [];
+
     /**
      * Constructor. Crea el objeto seteando los atributos pasados por parametro
      *
@@ -231,6 +237,14 @@ abstract class model {
         if ( is_null( $this->_id ) ) {
             $this->created_at = $this->updated_at;
         }
+        $this->calculate_vertex();
+        if ( !empty( $this->vertex[ 'coordinates' ] ) ) {
+            foreach ( $this->vertex[ 'coordinates' ] as $polygon_index => $array_vertex_polygon ) {
+                foreach ( $array_vertex_polygon as $vertex_index => $vertex ) {
+                    $this->vertex[ 'coordinates' ][ $polygon_index ][ $vertex_index ] = array_map( '\floatval', $vertex );
+                }
+            }
+        }
 
         $this->object_encode_data( true );
         $database = databasemongo::getDatabase();
@@ -263,4 +277,105 @@ abstract class model {
      */
     abstract protected function ensureIndex();
 
+    /**
+     * @return string Features en formato JSON
+     * @throws \JsonException
+     */
+    public function get_string_features() {
+        if ( \is_array( $this->geometry ) ) {
+            return json_encode( $this->geometry, JSON_THROW_ON_ERROR | JSON_OBJECT_AS_ARRAY );
+        }
+        return $this->geometry;
+    }
+
+    /**
+     * @return array Features en formato array PHP
+     * @throws \JsonException
+     */
+    public function get_array_features() {
+        if ( \is_string( $this->geometry ) ) {
+            return json_decode( $this->geometry, JSON_OBJECT_AS_ARRAY, 512, JSON_THROW_ON_ERROR );
+        }
+        return (array) $this->geometry;
+    }
+
+    /**
+     * Actualiza $this->vertex con datos de lat/lng max/min de las coordenadas de feature
+     * @throws \JsonException
+     */
+    public function calculate_vertex() {
+        $feature = $this->get_array_features();
+        $this->vertex = [
+            'type' => 'Polygon',
+            'coordinates' => [],
+        ];
+        $lat_max = null;
+        $lat_min = null;
+        $lng_max = null;
+        $lng_min = null;
+
+        if( !isset( $feature['coordinates'])&&is_array( $feature)){
+            $feature = reset( $feature);
+        }
+        if ( isset( $feature[ 'coordinates' ], $feature[ 'type' ] ) ) {
+            switch ( strtolower( $feature[ 'type' ] ) ) {
+                case 'point':
+                    $coordinate_set_coordinates = [ [ $feature[ 'coordinates' ] ] ];
+                    break;
+                case 'linestring':
+                    $coordinate_set_coordinates = [ $feature[ 'coordinates' ] ];
+                    break;
+                case 'polygon':
+                    $coordinate_set_coordinates = $feature[ 'coordinates' ];
+                    break;
+                case 'multilinestring':
+                case 'multipolygon':
+                    $coordinate_set_coordinates = reset($feature[ 'coordinates' ]);
+                    break;
+                default:
+                    $coordinate_set_coordinates = [];
+                    break;
+            }
+
+            if ( !empty( $coordinate_set_coordinates ) ) {
+                foreach ( $coordinate_set_coordinates as $coordinate_subset_array ) {
+                    foreach ( $coordinate_subset_array as $coordinate ) {
+                        // @note Coordenadas GeoJSON son [lng,lat] en vez de [lat,lng]
+                        if ( empty( $lat_max ) ) {
+                            $lat_max = (float) $coordinate[ 1 ];
+                            $lat_min = (float) $coordinate[ 1 ];
+                            $lng_max = (float) $coordinate[ 0 ];
+                            $lng_min = (float) $coordinate[ 0 ];
+                        }
+
+                        if ( (float) $coordinate[ 0 ] < $lng_min ) {
+                            $lng_min = $coordinate[ 0 ];
+                        }
+                        if ( (float) $coordinate[ 0 ] > $lng_max ) {
+                            $lng_max = $coordinate[ 0 ];
+                        }
+                        if ( (float) $coordinate[ 1 ] < $lat_min ) {
+                            $lat_min = $coordinate[ 1 ];
+                        }
+                        if ( (float) $coordinate[ 1 ] > $lat_max ) {
+                            $lat_max = $coordinate[ 1 ];
+                        }
+                    }
+                }
+            }
+        }
+
+        if ( !empty( $lat_max ) ) {
+            // Si es un punto o linea recta... vamos a actualizar minimamente el vertice para que no de error el indice 2dsphere
+            if ( $lat_min === $lat_max ) {
+                $lat_min -= 0.000001;
+                $lat_max += 0.000001;
+            }
+            if ( $lng_min === $lng_max ) {
+                $lng_min -= 0.000001;
+                $lng_max += 0.000001;
+            }
+            $this->vertex[ 'coordinates' ] = [ [ [ $lng_min, $lat_max ], [ $lng_max, $lat_max ], [ $lng_max, $lat_min ], [ $lng_min, $lat_min ], [ $lng_min, $lat_max ] ] ];
+        }
+    }
 }
