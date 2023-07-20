@@ -38,6 +38,9 @@ if( $zone === 'map' ) {
     if( $zone === 'deslizamientos' ){
         $controller = new \georiesgosaragon\deslizamientos\controller();
         echo $controller->actions();
+    } elseif( $zone === 'inundaciones' ){
+        $controller = new \georiesgosaragon\inundaciones\controller();
+        echo $controller->actions();
     }
 } else {
     \georiesgosaragon\common\controller::show_html_header();

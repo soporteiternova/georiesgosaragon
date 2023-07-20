@@ -221,7 +221,8 @@ class controller {
                 $url = 'https://opendata.aragon.es/GA_OD_Core/download?view_id=208&formato=json&_pageSize=10000&_page=1';
                 break;
             case self::ENDPOINT_INUNDACIONES:
-                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json';
+                //TODO el page que sea con la hora...
+                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json&_pageSize=10000&_page=2';
                 break;
             case self::ENDPOINT_COLAPSOS:
                 $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json';
@@ -236,10 +237,11 @@ class controller {
      */
     public function crondaemon($debug = false) {
         $controller = new \georiesgosaragon\deslizamientos\controller();
-        $ret = $controller->actions( 'crondaemon', $debug );
+        $ret = true;
+        //$ret &= $controller->actions( 'crondaemon', $debug );
 
-        //$controller = new \georiesgosaragon\inundaciones\controller();
-        //$ret &= $controller->actions( 'crondaemon' );
+        $controller = new \georiesgosaragon\inundaciones\controller();
+        $ret &= $controller->actions( 'crondaemon', $debug );
 
         return $ret;
     }
@@ -254,6 +256,8 @@ class controller {
 
     private function main() {
         $url_glides = utils::get_server_url() . '?zone=deslizamientos&action=show_in_map&js=true';
+        $url_floods = utils::get_server_url() . '?zone=inundaciones&action=show_in_map&js=true';
+
         $str = '<script src="/libs/js/georiesgos.js"></script><div class="row">
                     <div class="col-5" style="border:1px solid #000000;padding:4px;margin:1.75em;"><b>Selecci&oacute;n de infraestructuras:</b><br/>
                         <label><input type="checkbox" id="roads_checkbox" name="roads" checked="checked"/>Carreteras</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -262,9 +266,9 @@ class controller {
                     <div class="col-5" style="border:1px solid #000000;padding:4px;margin:1.75em;"><b>Selecci&oacute;n de riesgos a visualizar:</b><br/>
                         <div class="row"><div class="col-5">
                             <label><button onclick="show_json_layer(\'' . $url_glides . '\',\'glides\');">Ver deslizamientos</button></label><br/>
-                            <label><button>Ver inundaciones</button></label><br/>
+                            <label><button onclick="show_json_layer(\'' . $url_floods . '\',\'floods\');">Ver inundaciones</button></label><br/>
                             <label><button>Ver colapsos</button></label><br/>
-                            <label><button>Limpiar</button></label><br/>
+                            <label><button onclick="disable_json_layers();">Limpiar</button></label><br/>
                             </div><div class="col-5">
                             <label>Fecha inicial<input class="col-5" type="text" id="dateMIN" name="dateMIN" value="' . date('d/m/Y') . '"/></label>
                             <label>Fecha final<input type="text" id="dateMAX" name="dateMAX" value="' . date('d/m/Y') . '"/></label>

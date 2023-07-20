@@ -246,6 +246,7 @@ class utils {
     public static function array_obj_to_geojson( $array_obj ) {
         $return = [ 'type' => 'FeatureCollection', 'features' => [] ];
         foreach( $array_obj as $obj ){
+            $obj->object_encode_data(true);
             $return['features'][] = $obj->get_feature_array();
         }
 

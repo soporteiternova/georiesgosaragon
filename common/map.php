@@ -130,6 +130,8 @@ class map {
                     //window['map{$rand}'].setMapTypeId('styled_map');
                     window['map_id'] = 'map{$rand}';
                     window['layer_glides'] = new google.maps.Data();
+                    window['layer_floods'] = new google.maps.Data();
+                    window['layer_collapses'] = new google.maps.Data();
                     window['map{$rand}'].setZoom({$zoom});
                     ";
         if ( $set_center_user ) {

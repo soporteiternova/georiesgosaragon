@@ -25,18 +25,31 @@ function show_json_layer(url,type){
     var zoom = parseInt(window[map_id].getZoom());
     url+='&sw_lat='+southWest.lat()+'&sw_lng='+southWest.lng()+'&ne_lat='+northEast.lat()+'&ne_lng='+northEast.lng()+'&zoom='+ zoom;
 
-    window['layer_glides'].setMap(null);
-    window['layer_glides']=null;
-    window['layer_glides'] = new google.maps.Data();
+    window['layer_'+ type].setMap(null);
+    window['layer_' + type]=null;
+    window['layer_' + type] = new google.maps.Data();
 
     var color = 'grey';
-    if(type==='glides'){
+    if( type === 'glides' ){
         color = 'red';
+    } else if ( type === 'floods' ){
+        color = 'blue';
     }
 
     if( zoom > 11 ){
-        window['layer_glides'].loadGeoJson(url);
-        window['layer_glides'].setStyle({fillColor: color});
-        window['layer_glides'].setMap(window[map_id]);
+        window['layer_' + type].loadGeoJson(url);
+        window['layer_' + type].setStyle({fillColor: color});
+        window['layer_' + type].setMap(window[map_id]);
     }
+}
+
+function disable_json_layers(){
+    var types = ['glides', 'floods', 'collapses'];
+    types.forEach(function(v){
+        if(window['layer_' + v]!==undefined) {
+            window['layer_' + v].setMap(null);
+            window['layer_' + v] = null;
+            window['layer_' + v] = new google.maps.Data();
+        }
+    });
 }
