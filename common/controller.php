@@ -221,11 +221,10 @@ class controller {
                 $url = 'https://opendata.aragon.es/GA_OD_Core/download?view_id=208&formato=json&_pageSize=10000&_page=1';
                 break;
             case self::ENDPOINT_INUNDACIONES:
-                //TODO el page que sea con la hora...
-                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json&_pageSize=10000&_page=2';
+                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json&_pageSize=10000&_page=' . date('H');
                 break;
             case self::ENDPOINT_COLAPSOS:
-                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json';
+                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json&_pageSize=10000&_page=7';
                 break;
         }
         return $url;
@@ -236,11 +235,15 @@ class controller {
      * @return bool
      */
     public function crondaemon($debug = false) {
-        $controller = new \georiesgosaragon\deslizamientos\controller();
         $ret = true;
+
+        $controller = new \georiesgosaragon\deslizamientos\controller();
         //$ret &= $controller->actions( 'crondaemon', $debug );
 
         $controller = new \georiesgosaragon\inundaciones\controller();
+        //$ret &= $controller->actions( 'crondaemon', $debug );
+
+        $controller = new \georiesgosaragon\colapsos\controller();
         $ret &= $controller->actions( 'crondaemon', $debug );
 
         return $ret;
