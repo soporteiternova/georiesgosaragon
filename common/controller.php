@@ -224,7 +224,7 @@ class controller {
                 $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json&_pageSize=10000&_page=' . date('H');
                 break;
             case self::ENDPOINT_COLAPSOS:
-                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json&_pageSize=10000&_page=9';
+                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json&_pageSize=10000&_page=' . date( 'H' );
                 break;
         }
         return $url;
@@ -238,10 +238,10 @@ class controller {
         $ret = true;
 
         $controller = new \georiesgosaragon\deslizamientos\controller();
-        //$ret &= $controller->actions( 'crondaemon', $debug );
+        $ret &= $controller->actions( 'crondaemon', $debug );
 
         $controller = new \georiesgosaragon\inundaciones\controller();
-        //$ret &= $controller->actions( 'crondaemon', $debug );
+        $ret &= $controller->actions( 'crondaemon', $debug );
 
         $controller = new \georiesgosaragon\colapsos\controller();
         $ret &= $controller->actions( 'crondaemon', $debug );
@@ -270,7 +270,7 @@ class controller {
                         <div class="row"><div class="col-5">
                             <label><button onclick="show_json_layer(\'' . $url_glides . '\',\'glides\');">Ver deslizamientos</button></label><br/>
                             <label><button onclick="show_json_layer(\'' . $url_floods . '\',\'floods\');">Ver inundaciones</button></label><br/>
-                            <label><button>Ver colapsos</button></label><br/>
+                            <label><button onclick="show_json_layer(\'' . $url_floods . '\',\'collapses\');">Ver colapsos</button></label><br/>
                             <label><button onclick="disable_json_layers();">Limpiar</button></label><br/>
                             </div><div class="col-5">
                             <label>Fecha inicial<input class="col-5" type="text" id="dateMIN" name="dateMIN" value="' . date('d/m/Y') . '"/></label>

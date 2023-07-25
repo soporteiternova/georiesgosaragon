@@ -34,6 +34,8 @@ function show_json_layer(url,type){
         color = 'red';
     } else if ( type === 'floods' ){
         color = 'blue';
+    } else if (type === 'collapses' ){
+        color = 'brown';
     }
 
     if( zoom > 11 ){
