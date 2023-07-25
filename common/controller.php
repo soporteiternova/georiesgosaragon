@@ -224,7 +224,7 @@ class controller {
                 $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=211&formato=json&_pageSize=10000&_page=' . date('H');
                 break;
             case self::ENDPOINT_COLAPSOS:
-                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json&_pageSize=10000&_page=7';
+                $url = 'https://opendata.aragon.es/GA_OD_Core/download?resource_id=212&formato=json&_pageSize=10000&_page=9';
                 break;
         }
         return $url;
