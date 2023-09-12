@@ -127,7 +127,7 @@ class map {
                     
                     //window['map{$rand}'].setOptions(mapTypeControlOptions);
                     
-                    window['map{$rand}'].setMapTypeId('styled_map');
+                    //window['map{$rand}'].setMapTypeId('styled_map');
                     window['map_id'] = 'map{$rand}';
                     window['layer_glides'] = new google.maps.Data();
                     window['layer_floods'] = new google.maps.Data();
