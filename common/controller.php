@@ -154,8 +154,8 @@ class controller {
                     <header class="special container">
                         <span class="icon solid fa-car-crash"></span>
                         <h2>GeoRiesgos <b>Arag&oacute;n </b ></h2 >
-                        <h2>ATENCI&Oacute;N: APLICACI&Oacute;N EN DESARROLLO</h2>
                         <p>Toda la informaci&oacute;n en tiempo real sobre riesgos geogr&aacute;ficos en Arag&oacute;n, que puedan afectar a las infrastructuras principales de carreteras y ferrocarriles.</p>
+                        <p>Este es un programa inform&aacute;tico de software libre denominado "GeoRiesgos Arag&oacute;n" que forma parte de la subvenci&oacute;n de software libre, seg&uacute;n ORDEN CUS/166/2023, de 15 de febrero, por la que se convocan subvenciones de apoyo al software libre dirigidas a microempresas y a trabajadores aut&oacute;nomos.</p>
                     </header >
 
                     <!--One -->
@@ -267,6 +267,7 @@ class controller {
                         <label><input type="checkbox" id="railways_checkbox" name="railways" checked="checked"/>Ferrocarril</label>
                     </div>
                     <div class="col-5" style="border:1px solid #000000;padding:4px;margin:1.75em;"><b>Selecci&oacute;n de riesgos a visualizar:</b><br/>
+                    <div class="col-11">Las capas se visualizan a partir del nivel 11 de zoom</div>
                         <div class="row"><div class="col-5">
                             <label><button onclick="show_json_layer(\'' . $url_glides . '\',\'glides\');">Ver deslizamientos</button></label><br/>
                             <label><button onclick="show_json_layer(\'' . $url_floods . '\',\'floods\');">Ver inundaciones</button></label><br/>

@@ -57,7 +57,7 @@ class map {
             'src' => 'https://servicios.idee.es/wms-inspire/transportes',
             'layers' => 'TN.RoadTransportNetwork.RoadLink',
             'index' => 1,
-            'active' => false
+            'active' => true
         ];
         $arrayopts[ 'wms_layers' ][] = [
             'title' => 'Ferrocarril',
@@ -65,7 +65,7 @@ class map {
             'src' => 'https://servicios.idee.es/wms-inspire/transportes',
             'layers' => 'TN.RailTransportNetwork.RailwayLink',
             'index' => 2,
-            'active' => false
+            'active' => true
         ];
         [ $str_layers, $map_layers ] = self::get_layers_config_wms( $rand, $arrayopts );
 
@@ -93,10 +93,10 @@ class map {
                                     {'visibility': 'off'}
                                 ]
                           },{
-                        'featureType': 'road',
-                                'stylers': [ {
-                            'visibility': 'off'
-                            } ]
+                            'featureType': 'road',
+                            'stylers': [ {
+                                'visibility': 'off'
+                                } ]
                         }, {
                         'featureType': 'landscape',
                                 'elementType': 'labels',
@@ -127,7 +127,7 @@ class map {
                     
                     //window['map{$rand}'].setOptions(mapTypeControlOptions);
                     
-                    //window['map{$rand}'].setMapTypeId('styled_map');
+                    window['map{$rand}'].setMapTypeId('styled_map');
                     window['map_id'] = 'map{$rand}';
                     window['layer_glides'] = new google.maps.Data();
                     window['layer_floods'] = new google.maps.Data();
@@ -153,8 +153,6 @@ class map {
                     "' . utils::get_server_url() . '/common/files/comunidades.geojson"
               );}';
 
-        // https://servicios.idee.es/wms-inspire/transportes?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=41.41068449712128086,-0.7116213592233039398,41.97951944857759088,-0.5357718446601971163&CRS=EPSG:4326&WIDTH=575&HEIGHT=1860&LAYERS=TN.RoadTransportNetwork.RoadLink&STYLES=&FORMAT=image/png&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE
-        // https://servicios.idee.es/wms-inspire/transportes?&BBOX=41.70572851523752,-0.966796875,41.73852846935917,-0.9228515625&WIDTH=256SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=TN.RoadTransportNetwork.RoadLink&STYLES=&CRS=EPSG:4326&HEIGHT=256&FORMAT=image/png&TRANSPARENT=true
 
         $str .= '</script>';
 
