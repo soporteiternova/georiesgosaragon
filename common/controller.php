@@ -92,6 +92,7 @@ class controller {
                                 <li><a href="https://twitter.com/tecnocarreteras" target="_blank" class="icon brands circle fa-twitter"><span class="label">Twitter</span></a></li>
                                 <li><a href="https://facebook.com/tecnocarreteras" target="_blank" class="icon brands circle fa-facebook-f"><span class="label">Facebook</span></a></li>
                                 <li><a href="https://github.com/soporteiternova/georiesgosaragon" target="_blank" class="icon brands circle fa-github"><span class="label">Github</span></a></li>
+                                <li><a href="https://aragon.es/" target="_blank"><img src="img/logo_gobierno_aragon.png" alt="Gobierno de Arag&oacute;n" style="width:10%; margin-top:40px;"/></a></li>
                             </ul>
                             <ul class="copyright">
                                 <li>Proyecto financiado por el Gobierno de Arag&oacute;n por importe de 6000 euros - &copy; ' . date( 'Y' ) . ' <a href="https://www.iternova.net/" target="_blank">ITERNOVA</a></li>
