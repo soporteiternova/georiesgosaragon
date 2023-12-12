@@ -92,10 +92,9 @@ class controller {
                                 <li><a href="https://twitter.com/tecnocarreteras" target="_blank" class="icon brands circle fa-twitter"><span class="label">Twitter</span></a></li>
                                 <li><a href="https://facebook.com/tecnocarreteras" target="_blank" class="icon brands circle fa-facebook-f"><span class="label">Facebook</span></a></li>
                                 <li><a href="https://github.com/soporteiternova/georiesgosaragon" target="_blank" class="icon brands circle fa-github"><span class="label">Github</span></a></li>
-                                <li><a href="https://aragon.es/" target="_blank"><img src="img/logo_gobierno_aragon.png" alt="Gobierno de Arag&oacute;n" style="width:10%; margin-top:40px;"/></a></li>
                             </ul>
                             <ul class="copyright">
-                                <li>Proyecto financiado por el Gobierno de Arag&oacute;n por importe de 6000 euros - &copy; ' . date( 'Y' ) . ' <a href="https://www.iternova.net/" target="_blank">ITERNOVA</a></li>
+                                <li>' . date( 'Y' ) . ' <a href="https://www.iternova.net/" target="_blank">ITERNOVA</a></li>
                             </ul>
                         </footer>
                 </div>
@@ -150,13 +149,14 @@ class controller {
                 
                 <!-- Main -->
                 <article id="main">
-
-                    <header class="special container">
-                        <span class="icon solid fa-car-crash"></span>
-                        <h2>GeoRiesgos <b>Arag&oacute;n </b ></h2 >
+                    <section class="wrapper container">
+                        <div style="width:100%; text-align:center"><a href="https://aragon.es/" target="_blank"><img src="img/logo_gobierno_aragon.png" alt="Gobierno de Arag&oacute;n" style="width:30%;"/></a></div>
+                        <h2 style="text-align: center; width:100%">Proyecto financiado por el Gobierno de Arag&oacute;n</h2><hr>
+                        <!--<span class="icon solid fa-car-crash"></span>-->
+                        <h2 style="text-align:center; width:100%">GeoRiesgos <b>Arag&oacute;n </b ></h2 >
                         <p>Toda la informaci&oacute;n en tiempo real sobre riesgos geogr&aacute;ficos en Arag&oacute;n, que puedan afectar a las infrastructuras principales de carreteras y ferrocarriles.</p>
                         <p>Este es un programa inform&aacute;tico de software libre denominado "GeoRiesgos Arag&oacute;n" que forma parte de la subvenci&oacute;n de software libre, seg&uacute;n ORDEN CUS/166/2023, de 15 de febrero, por la que se convocan subvenciones de apoyo al software libre dirigidas a microempresas y a trabajadores aut&oacute;nomos.</p>
-                    </header >
+                    </section >
 
                     <!--One -->
                     <section class="wrapper style4 container">
